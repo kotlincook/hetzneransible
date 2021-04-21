@@ -14,13 +14,7 @@
   when: stat_result.stat.exists == false
 
 - name: Execute installimage
-  shell: >
-    {{ install_image.path }}
-        -a
-        -n {{ inventory_hostname }}
-        -b grub
-        -r {{ install_image.raid }}
-        -i {{ install_image.image }}
+  shell: "{{ install_image.path }} -a -n {{ inventory_hostname }} -b grub -r {{ install_image.raid }} -i {{ install_image.image }}"
 
 - name: Rebooting
   shell: reboot
