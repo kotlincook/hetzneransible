@@ -1,0 +1,29 @@
+---
+- name: Python installieren
+  raw: test /usr/bin/python || (apt -y update && install -y python-minimal)
+
+- name: Exitiert installimage?
+  stat:
+    path: /root/.oldroot/nfs/install/installimage
+  register: stat_result
+
+- block:
+  - debug:
+      msg: "installimage script nicht vorhanden"
+  - meta: end_play
+  when: stat_result.stat.exists == false
+
+- name: Execute installimage
+  shell: >
+    {{ install_image.path }}
+        -a
+        -n {{ inventory_hostname }}
+        -b grub
+        -r {{ install_image.raid }}
+        -i {{ install_image.images }}
+        -p /boot:ext3:512M,/:ext4:all
+        -d {{ install_image.drives }}
+
+- name: Rebooting
+  shell: reboot
+
